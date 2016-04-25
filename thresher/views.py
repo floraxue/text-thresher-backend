@@ -8,7 +8,8 @@ from rest_framework import status
 
 from models import Article, Topic, HighlightGroup, Client, Question, Answer
 from serializers import (UserSerializer, ArticleSerializer, TopicSerializer, 
-                         HighlightGroupSerializer, ClientSerializer, QuestionSerializer)
+                         HighlightGroupSerializer, ClientSerializer, QuestionSerializer,
+                         GenericSubmittedAnswerField)
 
 # Views for serving the API
 
@@ -90,6 +91,16 @@ def post_question(request):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def submit_answer(request):
+    if request.method == 'POST':
+        print("data", request.data)
+        serializer = GenericSubmittedAnswerField(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # Register our viewsets with the router
