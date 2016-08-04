@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
+from django.core.exceptions import ValidationError
 
 from rest_framework import routers, viewsets
 from rest_framework.decorators import list_route, api_view
@@ -9,7 +10,7 @@ from rest_framework import status
 from models import Article, Topic, HighlightGroup, Client, Question, Answer
 from serializers import (UserSerializer, ArticleSerializer, TopicSerializer, 
                          HighlightGroupSerializer, ClientSerializer, QuestionSerializer,
-                         GenericSubmittedAnswerField)
+                         GenericSubmittedAnswerField, answerizers)
 
 # Views for serving the API
 
@@ -82,6 +83,7 @@ def next_question(request, id, ans_id):
         return Response(serializer.data)
 
 
+## Example POST data: {"id":1,"type":"mc","question_id":17,"question_text":"foo?","answers":[{"answer_content":"bar","answer_id":1},{"answer_content":"baz","answer_id":2},{"answer_content":"xyzzy","answer_id":3}]}
 # TODO: Post a highlight group.
 @api_view(['POST'])
 def post_question(request):
@@ -93,14 +95,26 @@ def post_question(request):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+## Example POST data: {"question":6,"answer":1,"user":{"username":"nicketynick","password":"xyzzy","accuracy_score":0.9,"experience_score":2.2}}
 @api_view(['POST'])
 def submit_answer(request):
     if request.method == 'POST':
         print("data", request.data)
-        serializer = GenericSubmittedAnswerField(data=request.data)
+        data = request.data
+        question_id = data.get('question', None)
+        question = None
+        try:
+            question = Question.objects.get(id=question_id)
+        except:
+            raise ValidationError('Invalid Question ID')
+
+        serializer_class = answerizers[question.type]
+        serializer = serializer_class(data=data)
+        if not serializer.is_valid():
+            raise ValidationError(serializer.errors)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # Register our viewsets with the router
