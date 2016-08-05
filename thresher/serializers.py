@@ -128,14 +128,9 @@ class GenericSubmittedAnswerField(serializers.Field):
               "tb" : TBSubmittedAnswer,
               "dt" : DTSubmittedAnswer}
     
-    serializers = {"mc" : MCSubmittedAnswerSerializer,
-                   "cl": CLSubmittedAnswerSerializer,
-                   "tb" : TBSubmittedAnswerSerializer,
-                   "dt" : DTSubmittedAnswerSerializer}
-
     def to_representation(self, obj):
         question_type = obj.question.type
-        serializer = self.serializers[question_type]
+        serializer = answerizers[question_type]
 
         return serializer(obj).data
 
@@ -146,7 +141,7 @@ class GenericSubmittedAnswerField(serializers.Field):
         except:
             raise serializers.ValidationError('Invalid Question ID')
 
-        serializer = self.serializers[question.type]
+        serializer = answerizers[question.type]
         serialized_instance = serializer(data=data)
         if not serialized_instance.is_valid():
             raise serializers.ValidationError(serialized_instance.errors)
@@ -287,3 +282,8 @@ class TopicSerializer(serializers.ModelSerializer):
         fields = ('id', 'parent', 'name',
                   'order', 'glossary', 'instructions', 
                   'related_questions', 'article_highlight')
+
+answerizers = {"mc" : MCSubmittedAnswerSerializer,
+               "cl" : CLSubmittedAnswerSerializer,
+               "tb" : TBSubmittedAnswerSerializer,
+               "dt" : DTSubmittedAnswerSerializer}
