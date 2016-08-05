@@ -176,72 +176,54 @@ class ArticleHighlight(models.Model):
 # specifi types of answers (MC, CL, TB, ...)
 class SubmittedAnswer(models.Model):
     # The highlight group this answer is part of
-    highlight_group = models.ForeignKey(HighlightGroup)
-
-    class Meta:
-        abstract = True
-
- 
-# A submitted answer for a Multiple Choice question
-class MCSubmittedAnswer(SubmittedAnswer):
-    # The question this answer is for
-    question = models.ForeignKey(Question, limit_choices_to={"type":"mc"})
-
-    # The user who submitted this answer
-    user_submitted = models.ForeignKey(UserProfile, related_name="submitted_mc")
-
-    # The user who submitted this answer
-    user_submitted = models.ForeignKey(UserProfile, related_name="submitted_mc")
-
-    # The user who submitted this answer
-    user_submitted = models.ForeignKey(UserProfile, related_name="submitted_mc")
-
-    # The answer chosen
-    answer = models.ForeignKey(Answer)
-
-# A submitted answer for a Checklist question
-class CLSubmittedAnswer(SubmittedAnswer):
-    # The question this answer is for
-    question = models.ForeignKey(Question, limit_choices_to={"type":"cl"})
-
-    # The user who submitted this answer
-    user_submitted = models.ForeignKey(UserProfile, related_name="submitted_cl")
-
-    # The user who submitted this answer
-    user_submitted = models.ForeignKey(UserProfile, related_name="submitted_cl")
-
-    # The user who submitted this answer
-    user_submitted = models.ForeignKey(UserProfile, related_name="submitted_cl")
-
-    # For a checklist, each submission could include multiple answers 
-    # Answers are re-used across submissions
-    # Therefore we need a many to many relationship
-    answer = models.ManyToManyField(Answer)
-
-# A submitted highlight group for a Textbox question
-class TBSubmittedAnswer(SubmittedAnswer):
-    # The question this answer is for
-    question = models.ForeignKey(Question, limit_choices_to={"type":"tb"})
-
-    # The user who submitted this answer
-    user_submitted = models.ForeignKey(UserProfile, related_name="submitted_tb")
-
-    # The user who submitted this answer
-    user_submitted = models.ForeignKey(UserProfile, related_name="submitted_tb")
-
-    # The user who submitted this answer
-    user_submitted = models.ForeignKey(UserProfile, related_name="submitted_tb")
-
-    # The text of the answer
+    highlight_group = models.ForeignKey(HighlightGroup, related_name="submitted_answer")
+    question = models.ForeignKey(Question)
+    user_submitted = models.ForeignKey(UserProfile, related_name="submitted_answer")
     answer = models.TextField()
 
-# A submitted answer for a Date Time question
-class DTSubmittedAnswer(SubmittedAnswer):
-    # The question this answer is for
-    question = models.ForeignKey(Question, limit_choices_to={"type":"dt"})
+    # class Meta:
+    #     abstract = True
 
-    # The user who submitted this answer
-    user_submitted = models.ForeignKey(UserProfile, related_name="submitted_dt")
+ 
+# # A submitted answer for a Multiple Choice question
+# class MCSubmittedAnswer(SubmittedAnswer):
+#     # The question this answer is for
+
+#     # The user who submitted this answer
+
+#     # The answer chosen
+
+# # A submitted answer for a Checklist question
+# class CLSubmittedAnswer(SubmittedAnswer):
+#     # The question this answer is for
+#     question = models.ForeignKey(Question, limit_choices_to={"type":"cl"})
+
+#     # The user who submitted this answer
+#     user_submitted = models.ForeignKey(UserProfile, related_name="submitted_cl")
+
+#     # For a checklist, each submission could include multiple answers 
+#     # Answers are re-used across submissions
+#     # Therefore we need a many to many relationship
+#     answer = models.ManyToManyField(Answer)
+
+# # A submitted highlight group for a Textbox question
+# class TBSubmittedAnswer(SubmittedAnswer):
+#     # The question this answer is for
+#     question = models.ForeignKey(Question, limit_choices_to={"type":"tb"})
+
+#     # The user who submitted this answer
+#     user_submitted = models.ForeignKey(UserProfile, related_name="submitted_tb")
+
+#     # The text of the answer
+#     answer = models.TextField()
+
+# # A submitted answer for a Date Time question
+# class DTSubmittedAnswer(SubmittedAnswer):
+#     # The question this answer is for
+#     question = models.ForeignKey(Question, limit_choices_to={"type":"dt"})
+
+#     # The user who submitted this answer
+#     user_submitted = models.ForeignKey(UserProfile, related_name="submitted_dt")
     
-    # The submitted date time answer
-    answer = models.DateTimeField()
+#     # The submitted date time answer
+#     answer = models.DateTimeField()

@@ -95,7 +95,7 @@ def post_question(request):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-## Example POST data: {"question":6,"answer":1,"user":{"username":"nicketynick","password":"xyzzy","accuracy_score":0.9,"experience_score":2.2}}
+## Example POST data: {"question":6,"answer":1,"user":{"username":"nicketynick","password":"xyzzy","accuracy_score":0.9,"experience_score":2.2},"highlight_group":""}
 @api_view(['POST'])
 def submit_answer(request):
     if request.method == 'POST':
