@@ -3,8 +3,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from models import (Article, Topic, Question, Answer,
                     HighlightGroup, SubmittedAnswer,
-                    DTSubmittedAnswer, CLSubmittedAnswer,
-                    TBSubmittedAnswer, Client, ArticleHighlight,
+                    Client, ArticleHighlight,
                     UserProfile)
 
 
@@ -108,65 +107,6 @@ class SubmittedAnswerSerializer(serializers.ModelSerializer):
         highlight_group = HighlightGroup.objects.update(submitted_answer=submitted_answer, **highlight_data)
         user = UserProfile.objects.update(submitted_answer=submitted_answer, **user_data)
         return submitted_answer
-
-
-# class CLSubmittedAnswerSerializer(serializers.ModelSerializer):
-#     question = serializers.PrimaryKeyRelatedField(queryset=Question.objects.all())
-#     answer = serializers.PrimaryKeyRelatedField(many=True, queryset=Answer.objects.all())
-#     user = UserSerializer()
-
-#     class Meta:
-#          model = CLSubmittedAnswer
-#          fields = ('question', 'answer', 'user')
- 
-# class TBSubmittedAnswerSerializer(serializers.ModelSerializer):
-#     question = serializers.PrimaryKeyRelatedField(queryset=Question.objects.all())
-#     user = UserSerializer()
-
-#     class Meta:
-#          model = TBSubmittedAnswer
-#          fields = ('question', 'answer', 'user')
-   
-# class DTSubmittedAnswerSerializer(serializers.ModelSerializer):
-#     question = serializers.PrimaryKeyRelatedField(queryset=Question.objects.all())
-#     user = UserSerializer()
-
-#     class Meta:
-#          model = DTSubmittedAnswer
-#          fields = ('question', 'answer', 'user')
-
-# ## Custom fields for the serializers ##
-
-# class GenericSubmittedAnswerField(serializers.Field):
-#     """
-#     A custom field that represents a single submitted answer
-#     """
-#     models = {"mc" : MCSubmittedAnswer,
-#               "cl": CLSubmittedAnswer,
-#               "tb" : TBSubmittedAnswer,
-#               "dt" : DTSubmittedAnswer}
-    
-#     def to_representation(self, obj):
-#         question_type = obj.question.type
-#         serializer = answerizers[question_type]
-
-#         return serializer(obj).data
-
-#     def to_internal_value(self, data):
-#         question_id = data.get('question', None)
-#         try:
-#             question = Question.objects.get(id=question_id)
-#         except:
-#             raise serializers.ValidationError('Invalid Question ID')
-
-#         serializer = answerizers[question.type]
-#         serialized_instance = serializer(data=data)
-#         if not serialized_instance.is_valid():
-#             raise serializers.ValidationError(serialized_instance.errors)
-#         deserialized_data = serialized_instance.validated_data
-#         model = self.models[question.type]
-
-#         return {'class':model, 'data':deserialized_data} 
                                
 
 class OffsetField(serializers.Field):
@@ -258,7 +198,3 @@ class TopicSerializer(serializers.ModelSerializer):
                   'order', 'glossary', 'instructions', 
                   'related_questions', 'article_highlight')
 
-# answerizers = {"mc" : MCSubmittedAnswerSerializer,
-#                "cl" : CLSubmittedAnswerSerializer,
-#                "tb" : TBSubmittedAnswerSerializer,
-#                "dt" : DTSubmittedAnswerSerializer}

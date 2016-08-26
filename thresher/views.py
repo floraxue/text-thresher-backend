@@ -10,7 +10,7 @@ from rest_framework import status
 from models import Article, Topic, HighlightGroup, Client, Question, Answer
 from serializers import (UserSerializer, ArticleSerializer, TopicSerializer, 
                          HighlightGroupSerializer, ClientSerializer, QuestionSerializer,
-                         GenericSubmittedAnswerField, answerizers)
+                         SubmittedAnswerSerializer)
 
 # Views for serving the API
 
@@ -100,18 +100,19 @@ def post_question(request):
 def submit_answer(request):
     if request.method == 'POST':
         print("data", request.data)
-        data = request.data
-        question_id = data.get('question', None)
-        question = None
-        try:
-            question = Question.objects.get(id=question_id)
-        except:
-            raise ValidationError('Invalid Question ID')
+        # data = request.data
+        # question_id = data.get('question', None)
+        # question = None
+        # try:
+        #     question = Question.objects.get(id=question_id)
+        # except:
+        #     raise ValidationError('Invalid Question ID')
 
-        serializer_class = answerizers[question.type]
-        serializer = serializer_class(data=data)
-        if not serializer.is_valid():
-            raise ValidationError(serializer.errors)
+        # serializer_class = answerizers[question.type]
+        # serializer = serializer_class(data=data)
+        # if not serializer.is_valid():
+        #     raise ValidationError(serializer.errors)
+        serializer = SubmittedAnswerSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
